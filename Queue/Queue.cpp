@@ -37,44 +37,53 @@ Queue::Queue(const ValueType* valueArray, const size_t arraySize, QueueContainer
     switch (container)
     {
         case QueueContainer::List: {
-			_pimpl = new ListQueue();// конкретизируйте под ваши конструкторы, если надо
-			for(size_t i = 0; i < arraySize;i++)
-			{
-				_pimpl->enqueue(valueArray[i]);
-			}
+			_pimpl = new ListQueue();// конкретизируйте под ваши конструкторы, если надо	
         break;
        }
 
         case QueueContainer::Vector: {
 			_pimpl = new VectorQueue(); // конкретизируйте под ваши конструкторы, если надо
-			for(size_t i = 0; i < arraySize;i++)
-			{
-				_pimpl->enqueue(valueArray[i]);
-			}
         break;
         }
 		case QueueContainer::DoubleList: {
 			_pimpl = new DoubleListQueue();
-			for (size_t i = 0; i < arraySize; i++)
-			{
-				_pimpl->enqueue(valueArray[i]);
-			}
 			break;
 		}
-
         default:
             throw std::runtime_error("Неизвестный тип контейнера");
         }
+	for (size_t i = 0; i < arraySize; i++)
+	{
+		_pimpl->enqueue(valueArray[i]);
+	}
     }
 
 Queue::Queue(const Queue& copyStack)
- : _containerType(copyStack._containerType), _pimpl(copyStack._pimpl)
 {
-	*_pimpl = *(copyStack._pimpl);
+	_containerType = copyStack._containerType;
+	switch (_containerType)
+	{
+	case QueueContainer::List: {
+		_pimpl = new ListQueue(*(static_cast<ListQueue*>(copyStack._pimpl)));// конкретизируйте под ваши конструкторы, если надо	
+		break;
+	}
+
+	case QueueContainer::Vector: {
+		_pimpl = new VectorQueue(*(static_cast<VectorQueue*>(copyStack._pimpl))); // конкретизируйте под ваши конструкторы, если надо
+		break;
+	}
+	case QueueContainer::DoubleList: {
+		_pimpl = new DoubleListQueue(*(static_cast<DoubleListQueue*>(copyStack._pimpl)));
+		break;
+	}
+	default:
+		throw std::runtime_error("Unknown type");
+	}
 }
 
 Queue& Queue::operator=(const Queue& copyStack) {
 	int copySize = copyStack.size();
+	delete _pimpl;
 	if(copyStack._containerType == QueueContainer::List)
 	{
 		_pimpl = new ListQueue();// конкретизируйте под ваши конструкторы, если надо
@@ -140,7 +149,7 @@ size_t Queue::size() const
 	s1.enqueue(1);
 	s1.enqueue(2);
 	s1.enqueue(3);
-	
+
 	Queue s2(QueueContainer::Vector);
 	s2 = s1;
 	size_t b = s2.size();
@@ -158,3 +167,4 @@ size_t Queue::size() const
 
 	//return 0;
 }*/
+
