@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include "LinkedList2.h"
 #include <cassert>
 
@@ -119,7 +119,7 @@ void LinkedList2::insert(const size_t pos, const ValueType& value) {
 		pushFront(value);
 	}
 	else if (pos == _size) {
-		enqueueBack(value);
+		pushBack(value);
 	}
 	else {
 		Node* bufNode = this->_head;
@@ -136,7 +136,7 @@ void LinkedList2::insertAfterNode(Node* node, const ValueType& value) {
 	_size++;
 }
 
-void LinkedList2::enqueueBack(const ValueType& value) {
+void LinkedList2::pushBack(const ValueType& value) {
 	Node* nd = new Node(value, nullptr, _tail);
 	if (_tail != 0)
 	{
@@ -165,32 +165,26 @@ void LinkedList2::pushFront(const ValueType& value) {
 }
 
 void LinkedList2::remove(const size_t pos) {
-	if (_head) {
-		if (pos > 0 && pos < _size - 1)
+	if (_head)
+	{
+		if (pos != 0 && pos!= _size-1)
 		{
 			int counter = 0;
 			Node* tmp = _head;
-			while (counter <= pos) {
+			while (counter <= pos)
+			{
 				tmp = tmp->next;
 				counter++;
 			}
 			counter = 0;
 			Node* nd = _head;
-			while (counter < pos - 1) {
+			while (counter < pos - 1)
+			{
 				nd = nd->next;
 				counter++;
 			}
 			_size--;
 			nd->next = tmp;
-		}
-		if (pos == 0)
-		{
-			Node* tmp = _head;
-			tmp = tmp->next;
-			delete _head;
-			_size--;
-			_head = tmp;
-
 		}
 		if (pos == _size - 1)
 		{
@@ -198,15 +192,20 @@ void LinkedList2::remove(const size_t pos) {
 			tmp = tmp->last;
 			delete _tail;
 			_tail = tmp;
+			_tail->next = nullptr;
 			_size--;
 		}
-
+		if(pos == 0)
+		{
+			Node* tmp = _head;
+			tmp = tmp->next;
+			delete _head;
+			_size--;
+			_head = tmp;
+		}
 	}
-
 	else
-	{
 		cout << "The list is empty!" << endl;
-	}
 }
 void LinkedList2::removeBack()
 {
@@ -227,16 +226,29 @@ void LinkedList2::removeNextNode(Node* node)
 }
 
 void LinkedList2::reverse() {
+
 	Node* tmp = _head;
-	Node* next = NULL;
-	Node* last = NULL;
-	while (tmp->next != _tail->next) {
+	Node* next = nullptr;
+	Node* last = nullptr;
+	while (tmp)
+	{
 		next = tmp->next;
 		tmp->next = last;
 		last = tmp;
 		tmp = next;
 	}
 	_head = last;
+	/*Node* tmp = _head;
+	Node* next = nullptr;
+	Node* last = nullptr;
+	while (tmp->next) 
+	{
+		next = tmp->next;
+		tmp->next = last;
+		last = tmp;
+		tmp = next;
+	}
+	_head = last;*/
 }
 
 LinkedList2 LinkedList2::reverse() const
@@ -316,16 +328,16 @@ void LinkedList2::forceNodeDelete(Node* node) {
 	forceNodeDelete(nextDeleteNode);
 }
 
-
-/*int main() {
-	LinkedList v;
+/*int main()
+{
+	LinkedList2 v;
 	for (int i = 0; i < 5; i++)
-		v.enqueueBack(i);
+		v.pushBack(i);
 	for (int i = 0; i < v.size(); i++)
 		cout << v[i] << " ";
 	cout << endl;
 	v.pushFront(9);
-	v.enqueueBack(9);
+	v.pushBack(9);
 	for (int i = 0; i < v.size(); i++)
 		cout << v[i] << " ";
 	cout << endl;
@@ -347,6 +359,11 @@ void LinkedList2::forceNodeDelete(Node* node) {
 		cout << v[i] << " ";
 	cout << endl;
 	v.reverse();
+	LinkedList2 const m(v);
+	LinkedList2 const c = m.reverse();
 	for (int i = 0; i < v.size(); i++)
 		cout << v[i] << " ";
+	cout << endl;
+	for (int i = 0; i < c.size(); i++)
+		cout << c[i] << " ";
 }*/
